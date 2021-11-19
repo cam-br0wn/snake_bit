@@ -1,4 +1,8 @@
 We need:
 - To find a driver for the LCD display
   make/model of the LCD:  Sparkfun Quiic OLED
-  
+- Write I2C driver for...?
+- Write driver for PulseSensor
+  (https://github.com/WorldFamousElectronics)
+-
+
