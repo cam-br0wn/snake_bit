@@ -1,0 +1,4 @@
+We need:
+- To find a driver for the LCD display
+  make/model of the LCD:  Sparkfun Quiic OLED
+  
