@@ -25,15 +25,20 @@ void software_interrupt_trigger(void) {
 void SWI1_EGU1_IRQHandler(void) {
   // Clear interrupt event
   NRF_EGU1->EVENTS_TRIGGERED[0] = 0;
+  
+  for (int i = 0; i < 2000; i += 100) {
+     printf("Software Interrupt\n");
+     nrf_delay_ms(i);
 
-  // Implement me
+  }
 }
 
 void GPIOTE_IRQHandler(void) {
   // Clear interrupt event
+  printf("Interrupted!\n");
   NRF_GPIOTE->EVENTS_IN[0] = 0;
+  
 
-  // Implement me
 }
 
 int main(void) {
@@ -44,18 +49,26 @@ int main(void) {
   // You can access the GPIOTE register map as NRF_GPIOTE->
   //    where the register name in all caps goes after the arrow.
   //    For example, NRF_GPIOTE->CONFIG[0]
+  NRF_GPIOTE->CONFIG[0] = 0x00020E01;
+  NRF_GPIOTE->INTENSET = 0x1;
+  NVIC_EnableIRQ(GPIOTE_IRQn);
+  NVIC_SetPriority(GPIOTE_IRQn, 0);
 
   // STEP 6:
   // Trigger a software interrupt
   // Use the software_interupt_* functions defined above
+  software_interrupt_init();
+  NVIC_SetPriority(SWI1_EGU1_IRQn, 1);
 
   // STEP 7:
   // Trigger a software interrupt and demonstrate that a GPIO interrupt
   //    can preempt it if at a lower priority number
-
+  software_interrupt_trigger();
   // loop forever
   while (1) {
+
     printf("Looping\n");
+    
     nrf_delay_ms(1000);
   }
 }
