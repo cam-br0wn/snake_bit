@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include "app_timer.h"
 #include <math.h>
 
 #include "nrf_delay.h"
@@ -15,6 +16,7 @@
 
 // Global variables
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 1, 0);
+APP_TIMER_DEF(my_timer_1);
 
 int main(void) {
   printf("Board started!\n");
@@ -31,6 +33,10 @@ int main(void) {
   lsm303agr_init(&twi_mngr_instance);
 
   //TODO: implement me!
+  app_timer_init();
+  app_timer_create(&my_timer_1, APP_TIMER_MODE_REPEATED, read_everything);
+  app_timer_start(my_timer_1, 32768, NULL);
+
 
   // Loop forever
   while (1) {
