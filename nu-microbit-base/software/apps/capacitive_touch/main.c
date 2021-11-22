@@ -28,6 +28,12 @@ int main(void) {
     // Faster than normal so that we can see the touch sensor responding
     nrf_delay_ms(100);
 
+  	if (capacitive_touch_is_active()){
+  		printf("Touch\n");
+  	} else {
+  		printf("No touch\n");
+  	}
+
     // Add some stuff here to demonstrate that your driver works
   }
 }

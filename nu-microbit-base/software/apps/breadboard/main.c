@@ -45,9 +45,48 @@ static void gpio_init(void);
 static void adc_init(void);
 static float adc_sample_blocking(uint8_t channel);
 
+static int light_state(float voltage){
+	if (voltage < 1.5){ // Dark
+		return 0;
+	} else if (voltage < 2.6){ // Medium-bright
+		return 1;
+	} else { // Very-bright
+		return 2;
+	}
+} 
+
+static float convert_temp(float voltage){
+	// r1 = thermoresistor
+	// r2 = 10kohm
+	float resistance = 10000.0 * ((3.3/voltage) - 1.0);
+
+	float B  = 3950.0;
+	float R0 = 10000.0;
+	float T0 = 298.15;
+	
+	float R_inf = R0 * exp(-B/T0);
+	
+
+	return (B/log(resistance/R_inf)) - 273.15;
+}
+
 static void sample_timer_callback(void* _unused) {
   // Do things periodically here
-  // TODO
+
+  switch(light_state(adc_sample_blocking(ADC_LIGHT_CHANNEL))){
+  	case 0:
+		printf("Light: Dark\n");
+		break;
+	case 1:
+  		printf("Light: Medium-Bright\n");
+  		break;
+  	case 2:
+  		printf("Light: Very-Bright\n");
+		break;
+  }
+
+  printf("Temp %f\n",convert_temp(adc_sample_blocking(ADC_TEMP_CHANNEL)));
+  nrf_gpio_pin_read(SWITCH_IN) ? printf("Switch: ON\n") : printf("Switch: OFF\n");
 }
 
 static void saadc_event_callback(nrfx_saadc_evt_t const* _unused) {
@@ -57,13 +96,18 @@ static void saadc_event_callback(nrfx_saadc_evt_t const* _unused) {
 
 static void gpio_init(void) {
   // Initialize output pins
-  // TODO
+  nrf_gpio_pin_dir_set(LED_RED, NRF_GPIO_PIN_DIR_OUTPUT);
+  nrf_gpio_pin_dir_set(LED_GREEN, NRF_GPIO_PIN_DIR_OUTPUT);
+  nrf_gpio_pin_dir_set(LED_BLUE, NRF_GPIO_PIN_DIR_OUTPUT);
+  
 
   // Set LEDs off initially
-  // TODO
+  nrf_gpio_pin_set(LED_RED);
+  nrf_gpio_pin_set(LED_GREEN);
+  nrf_gpio_pin_set(LED_BLUE);
 
   // Initialize input pin
-  // TODO
+  nrf_gpio_pin_dir_set(SWITCH_IN, NRF_GPIO_PIN_DIR_INPUT);
 }
 
 static void adc_init(void) {
@@ -97,12 +141,10 @@ static float adc_sample_blocking(uint8_t channel) {
 
   // convert ADC counts to volts
   // 12-bit ADC with range from 0 to 3.6 Volts
-  // TODO
+  return ((float)adc_counts/4096.0) * 3.6;
 
   // return voltage measurement
-  return 0.0;
 }
-
 
 int main(void) {
   printf("Board started!\n");
@@ -124,7 +166,27 @@ int main(void) {
   // loop forever
   while (1) {
     // Don't put any code in here. Instead put periodic code in `sample_timer_callback()`
-    nrf_delay_ms(1000);
+	//printf("Temp: %f\n", convert_temp(adc_sample_blocking(ADC_TEMP_CHANNEL)));
+
+	if (light_state(adc_sample_blocking(ADC_LIGHT_CHANNEL))){
+		nrf_gpio_pin_clear(LED_RED);
+	} else {
+		nrf_gpio_pin_set(LED_RED);
+	}
+
+	if (convert_temp(adc_sample_blocking(ADC_TEMP_CHANNEL)) > 30.0){
+		nrf_gpio_pin_clear(LED_GREEN);
+	} else {
+		nrf_gpio_pin_set(LED_GREEN);
+	}
+
+	if (nrf_gpio_pin_read(SWITCH_IN)){
+		nrf_gpio_pin_clear(LED_BLUE);
+	} else {
+		nrf_gpio_pin_set(LED_BLUE);
+	}
+	
+    nrf_delay_ms(100);
   }
 }
 
