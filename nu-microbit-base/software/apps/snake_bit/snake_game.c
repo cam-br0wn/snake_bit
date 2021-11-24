@@ -9,6 +9,7 @@ unsigned char head_x, head_y, tail_x, tail_y;// 4 bytes, x and y coords of head 
 unsigned char collision;                     // 1 byte, boolean for collision condition
 unsigned char seg_add;                       // 1 byte, segment add counter
 unsigned int snake_len;                      // 4 bytes, snake length
+char *turn_arr[128];                         // 128 bytes
 
 
 // function to initialize the snake game
@@ -78,6 +79,22 @@ int move_snake(){
     board[head_y][head_x] = 'H';
 
     // damn im such an idiot how on earth am i going to figure out what the new tail is now
+    // I think this works but it might be shit...
+    if(!seg_add){
+        if(turn_arr[snake_len - 1] == 'N'){
+            tail_y--;
+        }
+        else if(turn_arr[snake_len - 1] == 'S'){
+            tail_y++;
+        }
+        else if(turn_arr[snake_len - 1] == 'E'){
+            tail_x++;
+        }
+        else{
+            tail_x--;
+        }
+    }
+    
 }
 
 int check_wall_collision(){
