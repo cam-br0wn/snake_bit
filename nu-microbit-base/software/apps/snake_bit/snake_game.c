@@ -118,7 +118,7 @@ void main(){
 
         // > INTERRUPT HANDLER CALL HERE <
         
-        button_dir = the_interrupt_handler(); // PLACEHOLDER
+        // button_dir = the_interrupt_handler(); // PLACEHOLDER
 
         // UPDATE GAME STATE
         change_dir(button_dir);

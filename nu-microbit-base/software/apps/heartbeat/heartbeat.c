@@ -22,12 +22,24 @@
 #define SAMPLING_FREQUENCY 16 // sampling frequency in hz. Fastest heartbeat of 300 bpm = 5hz. Nyquist frequency = 10hz
 #define BUFFER_SIZE 2*SAMPLING_FREQUENCY // buffer size is 2 seconds worth of data * sample rate.
 
-
 uint16_t samples[BUFFER_SIZE] = {0}; // buffer to store the ADC samples
 int index = 0; // index of buffer to put the next sample.
 APP_TIMER_DEF(sample_timer); // define an app timer
 
-
+static void saadc_event_callback(nrfx_saadc_evt_t const* event) {
+    if (event->type == NRFX_SAADC_EVT_DONE) {
+        // adjust the data here before returning
+        // Warning: don't try to print all the ADC samples without adding an nRF
+        //  delay every few samples. It really messes up the system. Something
+        //  definitely breaks and it needs to be re-programmed to start again
+        // determine the average of the samples
+        uint32_t average = 0;
+        for (int i=0; i<BUFFER_SIZE; i++) {
+            average += (uint16_t)samples[i];
+        }
+        average = average/BUFFER_SIZE;
+    }
+}
 
 static void adc_init(){
     // initialize the SAADC
@@ -49,13 +61,13 @@ static void adc_init(){
 }
 
 static void sample_sensor(void* _unused){
-    // collect ADC samples and store them in the buffer every time the app timer is set up.
+    // collect an ADC sample and store it in the buffer every time the app timer is triggered.
+    nrfx_saadc_sample();
 }
 
 int main(){
     printf("startup"); // tell me that you're alive please.
-
     // initialize app timer
     app_timer_init();
-    app_timer_create(&sample_timer, APP_TIMER_MODE_REPEATED, sample_sensor());
+    app_timer_create(&sample_timer, APP_TIMER_MODE_REPEATED, sample_sensor);
 }
