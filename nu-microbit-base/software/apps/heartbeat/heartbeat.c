@@ -8,7 +8,7 @@ void lpcomp_init(){
     };
 
     // first configure the LPCOMP
-    nrf_lpcomp_config(lpcomp_config);
+    nrf_lpcomp_configure(&lpcomp_config);
 
     // pin select 3
     nrf_lpcomp_input_select(NRF_LPCOMP_INPUT_3);

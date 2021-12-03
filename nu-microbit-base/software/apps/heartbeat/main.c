@@ -4,15 +4,18 @@
 #include <stdio.h>
 
 #include "heartbeat.h"
-#include "nrf_delay.h"
+#include <nrf_lpcomp.h>
 
 int main(void){
 
     // intialize drivers
-    nrfx_gpiote_init();
-    app_timer_init();
 
+    // USE NRFX
+
+    // initialize 
     lpcomp_init();
+
+    nrf_lpcomp_int_enable(-1);
 
     // loop forever
     while (1) {
