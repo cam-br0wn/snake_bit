@@ -1,28 +1,28 @@
 // main for heartbeat interrupts
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 
+#include "app_timer.h"
+#include "nrf_delay.h"
+#include "nrfx_lpcomp.h"
+
+#include "microbit_v2.h"
 #include "heartbeat.h"
-#include <nrf_lpcomp.h>
 
-int main(void){
+int main(void) {
+  printf("Board started!\n");
 
-    // intialize drivers
+  // intialize drivers
+  nrfx_lpcomp_init(&p_config, event_handler);
+  app_timer_init();
+  
+  // start capacitive touch driver
+  lpcomp_init();
 
-    // USE NRFX
-
-    // initialize 
-    lpcomp_init();
-
-    nrf_lpcomp_int_enable(-1);
-
-    // loop forever
-    while (1) {
-        if (nrf_lpcomp_int_enable_check(-1)){
-            printf("Beat!\n");
-        }
-    }
-
-    return 0;
+  // loop forever
+  while (1) {
+      
+  }
 }
