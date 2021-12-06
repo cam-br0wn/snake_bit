@@ -125,7 +125,7 @@ int check_wall_collision()
     return 0;
 }
 
-void main()
+void main_()
 {
     char button_dir; // local variable to main that holds Left or Right (as 'L' or 'R')
 

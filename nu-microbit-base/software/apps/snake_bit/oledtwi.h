@@ -3,9 +3,6 @@
 #include "nrf_twi_mngr.h"
 #include <math.h>
 
-static const uint8_t LCDHEIGHT = 64;
-static const uint8_t LCDWIDTH = 128;
-
 static const uint8_t PAGE = 0;
 static const uint8_t ALL = 1;
 
