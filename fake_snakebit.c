@@ -28,38 +28,49 @@ direction
 snake array
 head
 apple eaten
+apple_x and apple_y
+score
+
 
 things i need to do still
 figure out:
 how everything is drawn
 how to make the link list of the snake
 how to translate that into the screen
-how to incorperate speed 
+how to incorperate speed
 
 int cur_direction(int direction){
   if( direction == 1 | direction == 2 | direction ==0){
     if(right_button->pushed){
-      return cur_direction = 3;
+      return cur_direction = 3; // turns right
     }
     if(left_button->pushed){
-      return cur_direction =4;
-    }
-    else if(direction == 3 | direction == 4){
-      if(right_button->pushed){
-        return cur_direction = 1;
-      }
-      if(left_button->pushed){
-        return cur_direction = 2;
-      }
+      return cur_direction =4; // turns left
     }
   }
+    else if(direction == 3){
+      if(right_button->pushed){
+        return cur_direction = 1; // up
+      }
+      if(left_button->pushed){
+        return cur_direction = 2; //down
+      }
+    }
+      else if(direction == 4){
+        if(right_button->pushed){
+          return cur_direction = 2; //down
+        }
+        if(left_button->pushed){
+          return cur_direction = 1;// up
+        }
+      }
 }
 
 void moving(snake_array, int cur_direction){
- if(direction == 1){
+ if(direction == 2){
  // head.y = head.y +1;
  }
- if(direction == 2){
+ if(direction == 1){
   // head.y = head.y -1;
  }
  if(direction == 3){
@@ -83,13 +94,14 @@ return speed;
 
 void new_apple(){
   // free apple
-  // apple.x = random; //
-  // apple.y = random; // but not soemwehre the snake is
+  // apple_x = random; //
+  // apple_y = random; // but not soemwehre the snake is
 }
 
 bool apple_eaten(head, apple){
-  if(head.x == apple.x && head.y == apple.y){
+  if(head.x == apple_x && head.y == apple_y){
     new_apple();
+    score ++;
     return true;
   }
 }
